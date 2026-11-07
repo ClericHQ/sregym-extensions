@@ -1,0 +1,37 @@
+# Cleric's identity in the cluster: read-only, through the built-in view role (no Secrets, exec or port-forward)
+# plus the cluster-scoped objects view leaves out. install.sh applies it and reads the token for the integration.
+apiVersion: v1
+kind: Namespace
+metadata: {name: cleric}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata: {name: cleric-reader, namespace: cleric}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata: {name: cleric-reader-extra}
+rules:
+- {apiGroups: [""], resources: [nodes, persistentvolumes, namespaces], verbs: [get, list, watch]}
+- {apiGroups: [metrics.k8s.io], resources: [pods, nodes], verbs: [get, list]}
+- {apiGroups: [networking.k8s.io, storage.k8s.io, admissionregistration.k8s.io, rbac.authorization.k8s.io], resources: ["*"], verbs: [get, list, watch]}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata: {name: cleric-reader-view}
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: view}
+subjects: [{kind: ServiceAccount, name: cleric-reader, namespace: cleric}]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata: {name: cleric-reader-extra}
+roleRef: {apiGroup: rbac.authorization.k8s.io, kind: ClusterRole, name: cleric-reader-extra}
+subjects: [{kind: ServiceAccount, name: cleric-reader, namespace: cleric}]
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cleric-reader-token
+  namespace: cleric
+  annotations: {kubernetes.io/service-account.name: cleric-reader}
+type: kubernetes.io/service-account-token

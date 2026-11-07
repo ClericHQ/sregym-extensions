@@ -1,0 +1,4 @@
+checklist.json is SREGym's diagnosis checklist (sregym/conductor/oracles/llm_as_a_judge/rca_checklists.yaml), and
+grade.py's judge prompt and scoring are a port of its judge.
+
+MIT License, Copyright (c) SREGym contributors, https://github.com/SREGym/SREGym

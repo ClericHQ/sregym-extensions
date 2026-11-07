@@ -1,0 +1,4 @@
+# Every pod's logs into Loki, labelled by the chart's defaults (namespace, pod, container, app, job, node_name).
+config:
+  clients:
+    - url: http://loki.observe.svc.cluster.local:3100/loki/api/v1/push

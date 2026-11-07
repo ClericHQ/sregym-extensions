@@ -1,0 +1,14 @@
+# Cluster and container metrics (kube-state-metrics, cAdvisor, node exporter). The scenarios' services export none.
+alertmanager:
+  enabled: false
+prometheus-pushgateway:
+  enabled: false
+server:
+  persistentVolume:
+    enabled: false
+  retention: 2d
+# The chart's default config reloader (v0.95.x) has no arm64 image; v0.94.0 runs on arm64 and amd64 alike.
+configmapReload:
+  prometheus:
+    image:
+      tag: v0.94.0
